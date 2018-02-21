@@ -1,6 +1,6 @@
-# Project Name
+# Review Service and Component
 
-> Project description
+> Displays and paginates reviews.
 
 ## Related Projects
 
@@ -19,6 +19,18 @@
 
 > Some usage instructions
 
+This serves the component only without CSS or surrounding HTML.
+
+```html
+<script src="localhost:4004/component"></script>
+```
+
+This will serve a full page with some styles.
+
+```html
+<script src="localhost:4004/page"></script>
+```
+
 ## Requirements
 
 An `nvmrc` file is included if using [nvm](https://github.com/creationix/nvm).
@@ -33,7 +45,8 @@ An `nvmrc` file is included if using [nvm](https://github.com/creationix/nvm).
 From within the root directory:
 
 ```sh
-npm install -g webpack
 npm install
 ```
+
+## Building
 
