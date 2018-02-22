@@ -6,3 +6,7 @@ test('is true', () => {
 
   expect(dummy()).toBe(true);
 });
+
+test('another dummy test', () => {
+  expect(true).toBe(true);
+});
