@@ -1,6 +1,6 @@
 # Review Service and Component
 
-[![CircleCI](https://circleci.com/gh/fullstack-flapjacks/review-service/tree/master.svg?style=svg)](https://circleci.com/gh/fullstack-flapjacks/review-service/tree/master)
+Test status: [![CircleCI](https://circleci.com/gh/fullstack-flapjacks/review-service/tree/master.svg?style=svg)](https://circleci.com/gh/fullstack-flapjacks/review-service/tree/master)
 
 > Displays and paginates reviews.
 
@@ -22,7 +22,7 @@
 
 ### Running the Server
 
-`npm run start` will start the node server on 4004.
+`npm start` will start the node server on 4004.
 
 ### Integration
 
@@ -101,10 +101,8 @@ An `nvmrc` file is included if using [nvm](https://github.com/creationix/nvm).
 
 From within the root directory:
 
-```sh
-npm install
-```
+`npm install`
 
 ### Building
 
-`npm run build` will run webpack on the cient and server side.
+`npm build` will run webpack on the client and server side.
