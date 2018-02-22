@@ -8,7 +8,8 @@
     "node": "9.5.0"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/eslint"
+    "lint": "./node_modules/.bin/eslint",
+    "test": "./node_modules/.bin/jest"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
@@ -35,7 +36,9 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "extract-text-webpack-plugin": "^3.0.2",
+    "jest": "^22.4.0",
     "node-sass": "^4.7.2",
+    "puppeteer": "^1.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.20.2",
     "webpack-node-externals": "^1.6.0"
