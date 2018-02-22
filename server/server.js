@@ -10,4 +10,4 @@ app.get('/home', (req, res) => {
   res.send(reactDOMServer.renderToString(reactApp.default()));
 });
 
-app.listen(3000);
+app.listen(4004);
