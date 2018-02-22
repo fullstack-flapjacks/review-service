@@ -1,5 +1,7 @@
 # Review Service and Component
 
+[![CircleCI](https://circleci.com/gh/fullstack-flapjacks/review-service/tree/master.svg?style=svg)](https://circleci.com/gh/fullstack-flapjacks/review-service/tree/master)
+
 > Displays and paginates reviews.
 
 ## Related Projects
