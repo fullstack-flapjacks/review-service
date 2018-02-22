@@ -10,7 +10,7 @@ module.exports = {
   target: 'node',
   entry: ['./reactApp.jsx'],
   output: {
-    filename: 'reactApp.bundle.js',
+    filename: './server/reactApp.bundle.js',
     libraryTarget: 'commonjs2'
   },
   module: {
