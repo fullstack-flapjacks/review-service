@@ -8,6 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:9.5.0
+      - image: mongo:3.6
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -39,6 +40,7 @@ jobs:
           name: "Jest Suite"
           command: npm test
           environment:
+            DB: "mongodb://localhost/"
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - store_test_results:
           path: reports/junit
