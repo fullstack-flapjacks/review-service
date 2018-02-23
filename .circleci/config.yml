@@ -34,10 +34,12 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: npm run seed_test
+      - run:
+          command: npm run seed_test
           environment:
             DB: "mongodb://localhost/"
-      - run: npm run stats_test
+      - run: 
+          command: npm run stats_test
           environment:
             DB: "mongodb://localhost/"
       - run:
@@ -50,6 +52,7 @@ jobs:
           path: reports/junit
       - store_artifacts:
           path: reports/junit
-      - run: npm run clear_test
+      - run: 
+          command: npm run clear_test
           environment:
             DB: "mongodb://localhost/"
