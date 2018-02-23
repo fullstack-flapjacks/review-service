@@ -10,7 +10,7 @@ const _ = require('ramda');
 
 
 function ratingDistribution(acc, rating){
-  console.log(rating, acc);
+  // console.log(rating, acc);
   var bucket = Math.max(rating.food, rating.service, rating.ambience, rating.value);
   acc[bucket] += 1;
 

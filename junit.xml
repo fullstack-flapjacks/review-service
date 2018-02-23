@@ -1,0 +1,22 @@
+<testsuites name="jest tests" tests="8" failures="0" time="0.984">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2018-02-23T19:17:09" time="0.964" tests="6">
+    <testcase classname=" seeds test database with mock data using the npm scripts" name=" seeds test database with mock data using the npm scripts" time="0.026">
+    </testcase>
+    <testcase classname=" review data is valid" name=" review data is valid" time="0.008">
+    </testcase>
+    <testcase classname=" user data is valid" name=" user data is valid" time="0.002">
+    </testcase>
+    <testcase classname=" restaurants data is valid" name=" restaurants data is valid" time="0.001">
+    </testcase>
+    <testcase classname=" stats data is valid" name=" stats data is valid" time="0.003">
+    </testcase>
+    <testcase classname=" ratings distribution data is valid" name=" ratings distribution data is valid" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2018-02-23T19:17:10" time="0.02" tests="2">
+    <testcase classname=" is true" name=" is true" time="0.001">
+    </testcase>
+    <testcase classname=" another dummy test" name=" another dummy test" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>
