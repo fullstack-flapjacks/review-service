@@ -11,18 +11,25 @@
     "lint": "./node_modules/.bin/eslint",
     "test": "./node_modules/.bin/jest --ci --testResultsProcessor='jest-junit'",
     "build": "./node_modules/.bin/webpack --config ./webpack.config.js --context ./client && ./node_modules/.bin/webpack --config ./server/webpack.config.js --context ./server",
-    "start": "./node_modules/.bin/node ./server/server.js"
+    "start": "./node_modules/.bin/node ./server/server.js",
+    "seed": "./node_modules/.bin/node ./server/db-models/seed.js reviewservice 100 10000 100",
+    "stats": "./node_modules/.bin/node ./server/db-models/stats.js reviewservice",
+    "seed_test": "./node_modules/.bin/node ./server/db-models/seed.js testreviewservice 1 1 1",
+    "stats_test": "./node_modules/.bin/node ./server/db-models/stats.js testreviewservice"
   },
   "dependencies": {
     "babel-core": "^6.26.0",
+    "chance": "^1.0.13",
     "crossroads": "^0.12.2",
     "express": "^4.16.2",
     "faker": "^4.1.0",
     "hasher": "^1.2.0",
     "mongodb": "^3.0.2",
+    "mongoose": "^5.0.6",
     "node": "^9.5.0",
     "npm": "^5.6.0",
     "prop-types": "^15.6.0",
+    "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "webpack": "^3.11.0"
