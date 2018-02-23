@@ -33,6 +33,8 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
+      - run: npm run seed_test
+      - run: npm run stats_test
       - run:
           name: "Jest Suite"
           command: npm test
@@ -42,3 +44,4 @@ jobs:
           path: reports/junit
       - store_artifacts:
           path: reports/junit
+      - run: npm run clear_test
