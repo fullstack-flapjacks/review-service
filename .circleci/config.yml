@@ -35,7 +35,11 @@ jobs:
         
       # run tests!
       - run: npm run seed_test
+          environment:
+            DB: "mongodb://localhost/"
       - run: npm run stats_test
+          environment:
+            DB: "mongodb://localhost/"
       - run:
           name: "Jest Suite"
           command: npm test
@@ -47,3 +51,5 @@ jobs:
       - store_artifacts:
           path: reports/junit
       - run: npm run clear_test
+          environment:
+            DB: "mongodb://localhost/"
