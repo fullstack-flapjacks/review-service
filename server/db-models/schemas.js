@@ -45,7 +45,7 @@ var reviewsSchema = new Schema({
 
 var userSchema = new Schema({
   name: String,
-  reviews: Array,
+  // reviews: Array,
   isVIP: Boolean,
   avatar: String
 });
