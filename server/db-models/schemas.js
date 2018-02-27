@@ -28,8 +28,9 @@ var statsSchema = new Schema({
 
 var reviewsSchema = new Schema({
   user: Schema.Types.ObjectId,
-  text: String,
+  text: { type: String, text: true },
   tags: Array,
+  averageRating: Number,
   rating: {
     food: Number,
     service: Number,
@@ -43,9 +44,10 @@ var reviewsSchema = new Schema({
   dinedOn: Date
 });
 
+reviewsSchema.path('text').index({ text: true });
+
 var userSchema = new Schema({
   name: String,
-  // reviews: Array,
   isVIP: Boolean,
   avatar: String
 });

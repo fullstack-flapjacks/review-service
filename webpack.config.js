@@ -1,17 +1,11 @@
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-
-/*
-  This webpack config is used strictly for rehydrating react components
-  and transpiling css files. The bundled css is ultimately included in the
-  Page component server side.
-*/
 
 module.exports = {
   context: __dirname,
-  entry: ['./app.js'],
+  entry: ['./components/App.js'],
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'public')
@@ -25,16 +19,16 @@ module.exports = {
             use: ['css-loader', 'sass-loader']
         })
       },
-      { test: /\.js$/, loader: 'babel-loader' }
+      { test: /\.jsx?$/, loader: 'babel-loader' }
     ]
   },
   plugins: [
     new ExtractTextPlugin('./css/main.css'),
-    // new HtmlWebpackPlugin({
-    //   inject: false,
-    //   template: require('html-webpack-template'),
-    //   appMountId: "app"
-    // })
+    new HtmlWebpackPlugin({
+      inject: false,
+      template: require('html-webpack-template'),
+      appMountId: "app"
+    })
   ],
   devtool: "source-map",
   // devServer: {

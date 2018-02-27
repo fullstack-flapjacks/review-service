@@ -20,12 +20,14 @@
     "clear_test": "./node_modules/.bin/node ./server/db-models/clear.js testreviewservice"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-core": "^6.26.0",
     "chance": "^1.0.13",
     "crossroads": "^0.12.2",
     "express": "^4.16.2",
     "faker": "^4.1.0",
     "hasher": "^1.2.0",
+    "moment": "^2.20.1",
     "mongodb": "^3.0.2",
     "mongoose": "^5.0.6",
     "node": "^9.5.0",
@@ -39,7 +41,9 @@
   "devDependencies": {
     "babel-jest": "^22.4.1",
     "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-es2017": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.9",
     "eslint": "^4.18.1",
@@ -49,6 +53,8 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "extract-text-webpack-plugin": "^3.0.2",
+    "html-webpack-plugin": "^2.30.1",
+    "html-webpack-template": "^6.1.0",
     "jest": "^22.4.0",
     "jest-junit": "^3.6.0",
     "node-sass": "^4.7.2",
