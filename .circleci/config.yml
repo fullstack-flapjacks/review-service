@@ -47,6 +47,7 @@ jobs:
           command: npm test
           environment:
             DB: "mongodb://localhost/"
+            TEST: "true"
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - store_test_results:
           path: reports/junit
