@@ -9,8 +9,8 @@ test('seeds test database with mock data using the npm scripts', async () => {
     const stats = await Models.statsModel.count();
     const ratings = await Models.ratingsDistModel.count();
 
-    expect(reviews).toBe(1);
-    expect(users).toBe(1);
+    expect(reviews).toBe(50);
+    expect(users).toBe(100);
     expect(restaurants).toBe(1);
     expect(stats).toBe(1);
     expect(ratings).toBe(1);    

@@ -35,7 +35,7 @@ jobs:
         
       # run tests!
       - run:
-          command: npm run seed_test
+          command: npm run test_seed
           environment:
             DB: "mongodb://localhost/"
       - run: 

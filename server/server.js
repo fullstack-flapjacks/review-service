@@ -101,8 +101,10 @@ router.get('/lowest/:rid/:page/:page_length/:search?', amw(async (req, res, next
 }));
 
 app.use('/', router);
-app.listen(4004);
+const server = app.listen(4004);
 
 module.exports = {
-  app: app
+  app: app,
+  server: server,
+  mongoose: mongoose
 };
