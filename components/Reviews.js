@@ -2,43 +2,33 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import * as _ from 'ramda';
 import axios from 'axios';
+import Utilities from './Utilities.js';
+import Stars from './Stars.js';
+import { SortDropdown, FilterCheckbox, FilterCheckboxes } from './FiltersAndSorting.js';
+import Pages from './Pages.js';
+import Stats from './Stats.js';
 
-
-const Summary = (props) => (
+const Summary = ({ user, review, rating }) => (
   <div className="review-summary">
-
     <div className="star-rating">
-    {_.range(0, props.rating).map((_, idx) => {
+    {_.range(0, rating).map((_, idx) => {
       return <div key={idx} className="star"></div>;
     })}
     </div>
-    <div className="dinedOn">{ moment(props.review.dinedOn).fromNow() }</div>
-
-    <div className="username">{ props.user.name } ({ props.review.location })</div>
+    <div className="dinedOn">{ moment(review.dinedOn).fromNow() }</div>
+    <div className="username">{ user.name } ({ review.location })</div>
   </div>
-)
+);
 
-class Pages extends Component {
-  constructor(props){
-    super(props);
-  }
-
-  render(){
-    const props = this.props;
-    const totalReviews = props.totalReviews;
-    const page_length = props.pageLength;
-
-    const pages = Math.ceil(totalReviews / page_length);
-
-    return <div className="pages">
-      {_.range(1, pages + 1).map((page) => {
-        return <div key={page} onClick={this.props.loadPage(page)} className={(page === props.currentPage) ? "page-label bold": "page-label"}>{page}</div>;
-      })}
-    </div>;
+const Body = ({ readMore, text }) => {
+  if (readMore === true){
+    return <div className="review-body">{ text }</div>;
+  } else {
+    const limitedText = text.slice(0, 128) + '...';
+    return <div className="review-body">{ limitedText }</div>;
   }
 }
 
-const Body = props => <div className="review-body">{ props.text }</div>
 const Footer = props => (
   <div className="review-footer">
     <a>+ Read More</a>
@@ -48,7 +38,6 @@ const Footer = props => (
 class Review extends Component {
   constructor(props){
     super(props);
-    this.starRating = this.starRating.bind(this);
     this.onReadMore = this.onReadMore.bind(this);
 
     this.state = {
@@ -57,12 +46,7 @@ class Review extends Component {
   }
 
   onReadMore(event){
-    console.log(event);
     this.setState({ readMore: !this.state.readMore });
-  }
-
-  starRating(rating){
-    return Math.round((rating.food + rating.service + rating.ambience + rating.value) / 4);
   }
 
   render(){
@@ -71,7 +55,7 @@ class Review extends Component {
 
     return <div className="review">
       <Summary 
-        rating={this.starRating(review.rating)} 
+        rating={Utilities.starRating(review.rating)} 
         review={review} 
         user={user} />
       <Body readMore={this.state.readMore} text={review.text} />
@@ -80,29 +64,6 @@ class Review extends Component {
     </div>    
   }
 };
-
-const roundRating = (rating) => (Math.round(rating*10)/10).toFixed(1);
-
-const SortDropdown = ({ value, handleChange }) => (
-  <select value={value} onChange={handleChange}>
-    <option value="newest">Newest</option>
-    <option value="highest">Highest Rated</option>
-    <option value="lowest">Lowest Rated</option>
-  </select>
-);
-
-const FilterCheckbox = ({ word, onCheck, checked }) => (
-  <div className="filter">
-    <label>{word}</label>
-    <input type="checkbox" name={word} checked={checked} onChange={onCheck} />
-  </div>
-);
-
-const FilterCheckboxes = ({ words, onCheck, checks }) => (
-  <div className="filters">
-    {words.map((word, idx) => <FilterCheckbox key={idx} word={word} onCheck={onCheck} checked={checks[word]} />)}
-  </div>
-);
 
 class Reviews extends Component {
   constructor(props){
@@ -114,9 +75,9 @@ class Reviews extends Component {
       filterWords: ['quo', 'fugiat', 'officia'],
       reviews: [],
       stats: {},
-      page: 1, // default page
-      page_length: 25,
-      totalReviews: 0 // default length
+      page: 1,
+      pageLength: 25,
+      totalReviews: 0
     };
 
     this.onSortByChange = this.onSortByChange.bind(this);
@@ -124,31 +85,37 @@ class Reviews extends Component {
     this.generateGetURL = this.generateGetURL.bind(this);
     this.makeSearchString = this.makeSearchString.bind(this);
     this.loadPage = this.loadPage.bind(this);
+    this.getAndUpdateReviews = this.getAndUpdateReviews.bind(this);
   }
 
   componentDidMount(){
-    const get = axios('/home');
-    get.then((response) => {
-      const reviews = response.data.json.reviews;
-      const stats   = response.data.json.stats;
-      const totalReviews = response.data.json.totalReviews;
+    if (!this.props.test){
+      const getStats = axios('/summary');
 
-      this.setState({ reviews: reviews, stats: stats, rid: stats.restaurant, totalReviews: totalReviews });
-    });
+      getStats.then((response) => {;
+        const stats   = response.data.json.stats;
+        const totalReviews = response.data.json.totalReviews;
+
+        this.setState({ stats: stats, rid: stats.restaurant, totalReviews: totalReviews }, 
+          () => {
+            this.getAndUpdateReviews(this.generateGetURL())
+          });
+      });
+    }
   }
 
   loadPage(page){
-    return (event) => {
-      const currentPage = page;
-      this.setState({ page: currentPage }, () => {
+    if (!this.props.test){
+      return (event) => {
+        const currentPage = page;
         const sortBy = this.state.sortByValue;
-        const getPage = axios(this.generateGetURL(sortBy, this.state.filters, this.state.page));
+        const getPage = axios(this.generateGetURL(sortBy, this.state.filters, currentPage));
         getPage.then((response) => {
           const reviews = response.data.json.reviews;
 
-          this.setState({ reviews: reviews });
+          this.setState({ reviews: reviews, page: currentPage });
         });        
-      });
+      }      
     }
   }
 
@@ -163,23 +130,29 @@ class Reviews extends Component {
     return filterWords.join(',');
   }
 
-  generateGetURL(sortBy, filters, page = 1){
+  generateGetURL(sortBy = 'newest', filters = {}, page = 1){
     const words = this.makeSearchString(filters);
-    const url = `/${sortBy}/${this.state.rid}/${page}/${this.state.page_length}/${words}`;
+    const url = `/${sortBy}/${this.state.rid}/${page}/${this.state.pageLength}/${words}`;
 
     return url;
   }
 
+  getAndUpdateReviews(url){
+    if (!this.props.test){
+      const getReviews = axios(url);
+      getReviews.then((response) => {
+        const reviews = response.data.json.reviews;
+        const totalReviews = response.data.json.totalReviews;
+        this.setState({ reviews: reviews, totalReviews: totalReviews });
+      });      
+    }
+  }
+
   onSortByChange(event){
     const sortBy = event.target.value;
-    this.setState({ sortByValue: event.target.sortBy });
+    this.setState({ sortByValue: sortBy });
 
-    const getReviews = axios(this.generateGetURL(sortBy, this.state.filters));
-    getReviews.then((response) => {
-      const reviews = response.data.json.reviews;
-      const totalReviews = response.data.json.totalReviews;
-      this.setState({ reviews: reviews, totalReviews: totalReviews });
-    });
+    this.getAndUpdateReviews(this.generateGetURL(sortBy, this.state.filters));
   }
 
   onFilterCheck(event){
@@ -197,32 +170,17 @@ class Reviews extends Component {
     });
 
     const sortBy = this.state.sortByValue;
-    const getReviews = axios(this.generateGetURL(sortBy, updatedFilters));
-    getReviews.then((response) => {
-      const reviews = response.data.json.reviews;
-      const totalReviews = response.data.json.totalReviews;
-      this.setState({ reviews: reviews, totalReviews: totalReviews, page: 1 });
-    });
+    this.getAndUpdateReviews(this.generateGetURL(sortBy, updatedFilters));
   }
 
   render(){
     const stats   = this.state.stats;
     const reviews = this.state.reviews;
+    const stars   = (stats.averageRating !== undefined) ? Utilities.starRating(stats.averageRating): 0; 
+
 
     return <div id="reviews" className="reviews">
-    {(stats.averageRating) ? <div className="stats">
-        <h1>What {stats.totalRatings} People Are Saying</h1>
-        <div>
-          <h3>Overall ratings and reviews</h3>
-          <p>Reviews can only be made by diners who have eaten at this restaurant</p>
-          <div className="breakdown">
-            <span className="rating food">{ roundRating(stats.averageRating.food) }</span><br />
-            <span className="rating service">{ roundRating(stats.averageRating.service) }</span><br />
-            <span className="rating ambience">{ roundRating(stats.averageRating.ambience) }</span><br />
-            <span className="rating value">{ roundRating(stats.averageRating.value) }</span>
-          </div> 
-        </div>
-      </div>: undefined }
+      {(stats.averageRating) ? <Stats stats={stats} />: undefined }
       <div className="sorting-filters">
         <h2>Sort By</h2>
         <SortDropdown value={this.state.sortByValue} handleChange={this.onSortByChange} />
@@ -235,7 +193,11 @@ class Reviews extends Component {
         }): undefined}
       </div>
       <div className="reviews-footer">
-        <Pages totalReviews={this.state.totalReviews} pageLength={this.state.page_length} loadPage={this.loadPage} />
+        <Pages 
+          totalReviews={this.state.totalReviews} 
+          pageLength={this.state.pageLength} 
+          loadPage={this.loadPage} 
+          currentPage={this.state.currentPage} />
       </div> 
     </div>;
   }

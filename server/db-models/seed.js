@@ -30,7 +30,6 @@ let saveRestaurants = Promise.all(_.map((model) => {
 let createdUsers = _.map(() => {
   return Models.userModel({
     name: faker.name.findName(),
-    reviews: [],
     isVIP: faker.random.boolean(),
     avatar: faker.image.avatar()
   });

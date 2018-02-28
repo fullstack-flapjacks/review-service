@@ -1,11 +1,9 @@
 const _ = require('ramda');
-
+const Chance = require('chance');
+const chance = new Chance();
 const express = require('express');
-// const reactApp = require('./reactApp.bundle');
-// const reactDOMServer = require('react-dom/server');
 
-
-const DB_NAME = 'reviewservice';
+const DB_NAME = (process.env.TEST === 'true') ? 'testreviewservice' : 'reviewservice';
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DB + DB_NAME);
@@ -14,73 +12,32 @@ const Models = require('./db-models/models.js');
 const app = express();
 app.use(express.static('../public'));
 
-
+// For catching promise errors
 const amw = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 }
 
+// Helper for MongoDB searches
 function createSearchString(searchString){
   if (!searchString || searchString.length === 0){ return ""; }
   const words = searchString.split(',');
   const andWords = _.map((word) => '\"' + word + '\"', words);
-  // console.log(andWords);
   return andWords.join(' ');
 
 }
 
-const router = express.Router();
-// router.use(asyncMiddleware);
-
-router.get('/home', amw(async (req, res, next) => {
-    const restaurants  = await Models.restaurantModel.find({}).limit(10);
-    const restaurant   = restaurants[0];
-    const reviews      = await Models.reviewsModel.find({ restaurant: restaurant._id }).limit(100).sort({ dinedOn: -1 }).exec();
-    const totalReviews = await Models.reviewsModel.find({ restaurant: restaurant._id }).count();
-    const reviewsUsers = await Promise.all(_.map(async (review) => {
-      const reviewClone = _.clone(review._doc);
-      const user = await Models.userModel.findOne({ _id: review.user });
-
-      return {...reviewClone, user: user._doc };
-    }, reviews));
-
-    const stats = await Models.statsModel.findOne({ restaurant: restaurant._id });
-
-    res.send({ status: 'ok', json: { reviews: reviews, stats: stats, totalReviews: totalReviews }});
-}));
-
-// router.get('/reviews/:rid/:page/:page_length/:search?', amw(async (req, res, next) => {
-//   const params      = req.params;
-//   const rid         = params.rid;
-//   const page        = parseInt(params.page);
-//   const page_length = parseInt(params.page_length);
-//   const search      = createSearchString(params.search);
-
-//   if (search === undefined){
-//     var reviews = await Models.reviewsModel.find({ restaurant: rid }).skip(page*page_length).limit(page_length);
-//   } else {
-//     var reviews = await Models.reviewsModel.find({ restaurant: rid, $text: { $search: search } }).skip(page*page_length).limit(page_length);
-//   }
-
-//   res.send({ status: 'ok', json: { reviews: reviews } });
-// }));
-
-router.get('/newest/:rid/:page/:page_length/:search?', amw(async (req, res) => {
-  const params      = req.params;
-
-  // console.log('params', params);
-  const rid         = params.rid;
-  const page        = parseInt(params.page);
-  const page_length = parseInt(params.page_length);
-  const search      = createSearchString(params.search);
-
-  // console.log('offset', (page - 1)*page_length);
+const getReviews = async (rid, page, page_length, sortOptions, search) => {
+  // const rid         = rid;
+  page        = parseInt(page);
+  page_length = parseInt(page_length);
+  search      = createSearchString(search);
 
   if (search === undefined || search.length === 0){
     var reviews = await Models.reviewsModel
       .find({ restaurant: rid })
-      .sort({ dinedOn: -1 })
+      .sort(sortOptions)
       .skip((page - 1)*page_length)
       .limit(page_length);
 
@@ -89,7 +46,7 @@ router.get('/newest/:rid/:page/:page_length/:search?', amw(async (req, res) => {
   } else {
     var reviews = await Models.reviewsModel
       .find({ restaurant: rid, $text: { $search: search } })
-      .sort({ dinedOn: -1 })
+      .sort(sortOptions)
       .skip((page - 1)*page_length)
       .limit(page_length);
 
@@ -97,69 +54,55 @@ router.get('/newest/:rid/:page/:page_length/:search?', amw(async (req, res) => {
       .find({ restaurant: rid, $text: { $search: search } }).count();
   }
 
-  res.send({ status: 'ok', json: { reviews: reviews, totalReviews: totalReviews } });
+  const reviewsUsers = await Promise.all(_.map(async (review) => {
+    const reviewClone = _.clone(review._doc);
+    const user = await Models.userModel.findOne({ _id: review.user });
+
+    return {...reviewClone, user: user._doc };
+  }, reviews));
+
+  return { reviews: reviewsUsers, totalReviews: totalReviews }; 
+}
+
+const router = express.Router();
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
+router.get('/summary', amw(async (req, res, next) => {
+  const restaurants  = await Models.restaurantModel.find({}).limit(100);
+  const restaurant   = chance.pickone(restaurants);
+  const totalReviews = await Models.reviewsModel.find({ restaurant: restaurant._id }).count();
+  const stats = await Models.statsModel.findOne({ restaurant: restaurant._id });
+
+  res.send({ stats: 'ok', json: { stats: stats, totalReviews: totalReviews }});
+}));
+
+router.get('/newest/:rid/:page/:page_length/:search?', amw(async (req, res) => {
+  const params  = req.params;
+  const reviews = await getReviews(params.rid, params.page, params.page_length, { dinedOn: -1 }, params.search);
+
+  res.send({ status: 'ok', json: reviews });
 }));
 
 router.get('/highest/:rid/:page/:page_length/:search?', amw(async (req, res, next) => {
-  const params      = req.params;
-
-  // console.log('params', params);
-  const rid         = params.rid;
-  const page        = parseInt(params.page);
-  const page_length = parseInt(params.page_length);
-  const search      = createSearchString(params.search);
-
-  if (search === undefined || search.length === 0){
-    var reviews = await Models.reviewsModel
-      .find({ restaurant: rid })
-      .sort({ averageRating: -1 })
-      .skip((page - 1)*page_length)
-      .limit(page_length);
-
-    var totalReviews = await Models.reviewsModel
-      .find({ restaurant: rid }).count();
-  } else {
-    var reviews = await Models.reviewsModel
-      .find({ restaurant: rid, $text: { $search: search } })
-      .sort({ averageRating: -1 })
-      .skip((page - 1)*page_length)
-      .limit(page_length);
-
-    var totalReviews = await Mdoels.reviewsModel
-      .find({ restaurant: rid, $text: { $search: search } }).count();
-  }
-
-  res.send({ status: 'ok', json: { reviews: reviews, totalReviews: totalReviews } });
+  const params  = req.params;
+  const reviews = await getReviews(params.rid, params.page, params.page_length, { averageRating: -1 }, params.search);
+  res.send({ status: 'ok', json: reviews });
 }));
 
 router.get('/lowest/:rid/:page/:page_length/:search?', amw(async (req, res, next) => {
-  const params      = req.params;
-  const rid         = params.rid;
-  const page        = parseInt(params.page);
-  const page_length = parseInt(params.page_length);
-  const search      = createSearchString(params.search);
+  const params  = req.params;
+  const reviews = await getReviews(params.rid, params.page, params.page_length, { averageRating: 1 }, params.search);
 
-  if (search === undefined || search.length === 0){
-    var reviews = await Models.reviewsModel
-      .find({ restaurant: rid })
-      .sort({ averageRating: 1 })
-      .skip((page - 1)*page_length)
-      .limit(page_length);
-
-    var totalReviews = await Models.reviewsModel
-      .find({ restaurant: rid }).count();
-  } else {
-    var reviews = await Models.reviewsModel
-      .find({ restaurant: rid, $text: { $search: search } })
-      .skip((page - 1)*page_length)
-      .limit(page_length);
-
-    var totalReviews = await Models.reviewsModel
-      .find({ restaurant: rid, $text: { $search: search } }).count();
-  }
-
-  res.send({ status: 'ok', json: { reviews: reviews, totalReviews: totalReviews } });
+  res.send({ status: 'ok', json: reviews });
 }));
 
 app.use('/', router);
 app.listen(4004);
+
+module.exports = {
+  app: app
+};
