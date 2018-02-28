@@ -49,7 +49,7 @@ Promise.all([saveRestaurants, saveUsers]).then((results) => {
 
   let reviewModels = _.map((restaurant) => {
     var numReviews = Math.max(1, Math.round(chance.normal({ mean: NUM_REV, dev: Math.floor(NUM_REV / 2) })));
-
+    
     return _.map(() => {
       var user = chance.pickone(users);
       var rating = {
@@ -59,7 +59,6 @@ Promise.all([saveRestaurants, saveUsers]).then((results) => {
         value: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 }))))
       };
       var averageRating = (rating.food + rating.service + rating.ambience + rating.value) / 4;
-
 
       return Models.reviewsModel({
         user: user._id,
