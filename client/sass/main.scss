@@ -206,11 +206,13 @@ body {
 
 .first-page-container, .last-page-container {
   display: inline-block;
+  position: relative;
+  top: -4px;
 }
 
 .three-dots {
   position: relative;
-  top: -12px;
+  top: -16px;
   margin: 0 1rem;
 }
 
@@ -223,6 +225,28 @@ body {
 .page-label-container {
   .page-label {
     margin: 0 0.25rem;
+  }
+
+  .page-label.current-page {
+    border: 2px solid $red;
+    height: 36px;
+    width: 36px;
+    position: relative;
+    top: -2px;
+
+    .page-label-text {
+      line-height: 36px;
+    }
+
+    &:hover {
+      border: 2px solid $red;
+      height: 36px;
+      width: 36px;
+
+      .page-label-text {
+        line-height: 36px;
+      }
+    }
   }
 }
 

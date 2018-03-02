@@ -3,7 +3,7 @@ import * as _ from 'ramda';
 import Utilities from './Utilities.js';
 
 const Page = ({ page, currentPage, loadPage }) => {
-  const pageClassName = (page === currentPage) ? "page-label bold": "page-label";
+  const pageClassName = (page === currentPage) ? "page-label current-page bold": "page-label";
 
   return <div 
     key={page} onClick={loadPage} 
