@@ -27,7 +27,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: false,
       template: require('html-webpack-template'),
-      appMountId: "app"
+      appMountId: "app",
+      links: ['https://fonts.googleapis.com/css?family=Lato:300,400']
     })
   ],
   devtool: "source-map",
