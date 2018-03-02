@@ -34,19 +34,18 @@ body {
 }
 
 .bars {
-  margin-right:5px;
-  display: block;
-  height: 1.125rem;
-  width: 1.125rem;
   background: url("data:image/svg+xml;charset=utf-8,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' style='background:%23fff'%3E%3Ctitle%3Eicon/ic_noise_level%3C/title%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M0 0h24v24H0z'/%3E%3Crect fill='%23333' x='15' y='4' width='3' height='16' rx='.5'/%3E%3Crect fill='%23333' x='10' y='9' width='3' height='11' rx='.5'/%3E%3Crect fill='%23333' x='5' y='14' width='3' height='6' rx='.5'/%3E%3C/g%3E%3C/svg%3E") no-repeat 50%;
 }
 
 .thumb {
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M0 0h24v24H0z'/%3E%3Cpath stroke='%23333' stroke-width='2' d='M19.997 10.918A1 1 0 0 0 19 10h-4.503l.58-1.386c.568-1.355.568-2.344.09-3.06-.344-.517-.958-.934-1.878-1.234a1 1 0 0 0-1.17.44L8.419 11H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h12.36a1 1 0 0 0 .981-.804l1.656-8.278z'/%3E%3Cpath fill='%23333' d='M7 11h2v9H7z'/%3E%3C/g%3E%3C/svg%3E") no-repeat 50%;
+}
+
+.thumb, .bars {
   margin-right: 5px;
   display: block;
   height: 1.125rem;
   width: 1.125rem;
-  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M0 0h24v24H0z'/%3E%3Cpath stroke='%23333' stroke-width='2' d='M19.997 10.918A1 1 0 0 0 19 10h-4.503l.58-1.386c.568-1.355.568-2.344.09-3.06-.344-.517-.958-.934-1.878-1.234a1 1 0 0 0-1.17.44L8.419 11H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h12.36a1 1 0 0 0 .981-.804l1.656-8.278z'/%3E%3Cpath fill='%23333' d='M7 11h2v9H7z'/%3E%3C/g%3E%3C/svg%3E") no-repeat 50%;
 }
 
 .unchecked-box {
@@ -126,7 +125,7 @@ body {
   width: 24px;
   margin-right: 0.5rem;
   position: relative;
-  top: 5px;
+  top: 1px;
 }
 
 .right-arrow {
@@ -155,101 +154,6 @@ body {
   left:4px;
 }
 
-.go-back-container, .go-forward-container {
-  @include grid-column(1);
-}
-
-.goback, .goforward {
-  border-radius: 50%;
-  border: 1px solid $grey;
-  width: 34px;
-  height: 34px;
-
-  &:hover {
-    border: 2px solid $red;
-
-    width: 32px;
-    height: 32px;
-
-    .left-arrow {
-      top:3px;
-      left:3px; 
-    }
-
-    .right-arrow {
-      top: 4px;
-      left: 4px;
-    }
-  }
-}
-
-.goback {
-  float: left;
-}
-
-.page-buttons {
-  @include grid-column(10);
-}
-
-.page-label-container {
-  display: inline-block;
-
-}
-
-.goforward {
-  float: right;
-}
-
-.goback, .goforward, .page-label {
-  cursor: pointer;
-}
-
-.first-page-container, .last-page-container {
-  display: inline-block;
-  position: relative;
-  top: -4px;
-}
-
-.three-dots {
-  position: relative;
-  top: -16px;
-  margin: 0 1rem;
-}
-
-.page-nav-container {
-  @include grid-shift(3);
-  @include grid-column(6);
-  text-align: center;
-}
-
-.page-label-container {
-  .page-label {
-    margin: 0 0.25rem;
-  }
-
-  .page-label.current-page {
-    border: 2px solid $red;
-    height: 36px;
-    width: 36px;
-    position: relative;
-    top: -2px;
-
-    .page-label-text {
-      line-height: 36px;
-    }
-
-    &:hover {
-      border: 2px solid $red;
-      height: 36px;
-      width: 36px;
-
-      .page-label-text {
-        line-height: 36px;
-      }
-    }
-  }
-}
-
 /*
   HELPERS
 */
@@ -258,11 +162,14 @@ body {
   font-weight: bold;
 }
 
-.reviews {
-  @include grid-container;
-}
+/*
+  SECTIONS
+*/
+
+// Stats
 
 .reviews {
+  @include grid-container;
   overflow: hidden;
   padding: 2em;
 
@@ -330,6 +237,7 @@ body {
         &:hover {
           .five, .four, .three, .two, .one {
             border: 2px solid $red;
+            height: calc(1rem - 2px;)
           }
 
           .number {
@@ -378,25 +286,23 @@ body {
   }
 }
 
+// Individual reviews
+
 .review {
   @include grid-container;
+  clear: both;
+  padding: 1em;
+  margin: 1em 0;
 
   .photo-summary {
     .avatar {
       float: left;
       margin-right: 1em;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
     }
   }
-
-  .avatar {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-  }
-
-  clear: both;
-  padding: 1em;
-  margin: 1em 0;
 
   .review-summary {
     @include grid-column(12);
@@ -437,6 +343,8 @@ body {
   }
 }
 
+// Pagination bar
+
 .pages {
   @include grid-container(12);
   margin-left: 0;
@@ -470,6 +378,103 @@ body {
   }
 }
 
+.page-nav-container {
+  @include grid-shift(3);
+  @include grid-column(6);
+  text-align: center;
+}
+
+.page-label-container {
+  .page-label {
+    margin: 0 0.25rem;
+  }
+
+  .page-label.current-page {
+    border: 2px solid $red;
+    height: 36px;
+    width: 36px;
+    position: relative;
+    top: -2px;
+
+    .page-label-text {
+      line-height: 36px;
+    }
+
+    &:hover {
+      border: 2px solid $red;
+      height: 36px;
+      width: 36px;
+
+      .page-label-text {
+        line-height: 36px;
+      }
+    }
+  }
+}
+
+.go-back-container, .go-forward-container {
+  @include grid-column(1);
+}
+
+.goback, .goforward {
+  border-radius: 50%;
+  border: 1px solid $grey;
+  width: 34px;
+  height: 34px;
+
+  &:hover {
+    border: 2px solid $red;
+
+    width: 32px;
+    height: 32px;
+
+    .left-arrow {
+      top:3px;
+      left:3px; 
+    }
+
+    .right-arrow {
+      top: 4px;
+      left: 4px;
+    }
+  }
+}
+
+.goback {
+  float: left;
+}
+
+.page-buttons {
+  @include grid-column(10);
+}
+
+.page-label-container {
+  display: inline-block;
+
+}
+
+.goforward {
+  float: right;
+}
+
+.goback, .goforward, .page-label {
+  cursor: pointer;
+}
+
+.first-page-container, .last-page-container {
+  display: inline-block;
+  position: relative;
+  top: -4px;
+}
+
+.three-dots {
+  position: relative;
+  top: -16px;
+  margin: 0 1rem;
+}
+
+// Sorting & Filters
+
 .sorting-filters {
   @include grid-column(12);
 
@@ -500,6 +505,7 @@ body {
     padding: 0.5rem;
     border: 1px solid $grey;
     border-radius: 2px 2px 0 0;
+    cursor: pointer;
 
     &:hover {
       border: 2px solid $red;
@@ -535,6 +541,12 @@ body {
     &.hide {
       display: none;
     }
+
+    .dropdown-option {
+      &:hover {
+        background-color: $grey;
+      }
+    }
   }
 
   .filter {
@@ -543,6 +555,7 @@ body {
     display: inline-block;
     margin-right: 1rem;
     padding: 8px;
+    cursor: pointer;
 
     &:hover {
       border: 2px solid $red;
@@ -557,6 +570,11 @@ body {
       position: relative;
       top: -5px;
     }
+  }
+
+  .radio-text {
+    position: relative;
+    top: -5px;
   }
 }
 

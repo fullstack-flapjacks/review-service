@@ -23,7 +23,7 @@ class Pages extends Component {
   goBack(currentPage, lastPage){
     return (event) => {
       if (currentPage !== 1){
-        this.props.loadPage(currentPage - 1);
+        this.props.loadPage(currentPage - 1)();
       }      
     }
   }
@@ -31,7 +31,7 @@ class Pages extends Component {
   goForward(currentPage, lastPage){
     return (event) => {
       if (currentPage !== lastPage){
-        this.props.loadPage(currentPage + 1);
+        this.props.loadPage(currentPage + 1)();
       }      
     }
   }

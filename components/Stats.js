@@ -50,7 +50,7 @@ const Noise = ({ noise }) => {
     noiseLevel = 'Loud';
   }
 
-  return <div className="noise"><i className="bars"></i> <span className="bold">Noise</span> &middot; {noiseLevel}.</div>
+  return <div className="noise"><i className="bars"></i> <span className="bold">Noise</span> &middot; {noiseLevel}</div>
 }
 
 const Stats = ({ stats }) => (
