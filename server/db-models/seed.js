@@ -30,7 +30,6 @@ let saveRestaurants = Promise.all(_.map((model) => {
 let createdUsers = _.map(() => {
   return Models.userModel({
     name: faker.name.findName(),
-    reviews: [],
     isVIP: faker.random.boolean(),
     avatar: faker.image.avatar()
   });
@@ -50,19 +49,23 @@ Promise.all([saveRestaurants, saveUsers]).then((results) => {
 
   let reviewModels = _.map((restaurant) => {
     var numReviews = Math.max(1, Math.round(chance.normal({ mean: NUM_REV, dev: Math.floor(NUM_REV / 2) })));
-    var user = chance.pickone(users);
-
+    
     return _.map(() => {
+      var user = chance.pickone(users);
+      var rating = {
+        food: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 })))),
+        service: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 })))),
+        ambience: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 })))),
+        value: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 }))))
+      };
+      var averageRating = (rating.food + rating.service + rating.ambience + rating.value) / 4;
+
       return Models.reviewsModel({
         user: user._id,
         text: faker.lorem.paragraphs(),
         tags: _.map(() => faker.random.word(), _.range(0, Math.max(0, Math.round(chance.normal({ mean: 5 , dev: 2 }))))),
-        rating: {
-          food: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 })))),
-          service: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 })))),
-          ambience: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 })))),
-          value: Math.min(5, Math.max(1, Math.round(chance.normal({ mean: 3, dev: 1 }))))
-        },
+        averageRating: averageRating,
+        rating: rating,
         wouldRecommendToFriend: faker.random.boolean(),
         restaurant: restaurant._id,
         location: chance.pickone(restaurant.locations),

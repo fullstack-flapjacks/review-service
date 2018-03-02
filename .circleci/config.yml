@@ -35,7 +35,7 @@ jobs:
         
       # run tests!
       - run:
-          command: npm run seed_test
+          command: npm run test_seed
           environment:
             DB: "mongodb://localhost/"
       - run: 
@@ -47,6 +47,7 @@ jobs:
           command: npm test
           environment:
             DB: "mongodb://localhost/"
+            TEST: "true"
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - store_test_results:
           path: reports/junit
