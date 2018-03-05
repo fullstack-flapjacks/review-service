@@ -32,10 +32,5 @@ module.exports = {
     })
   ],
   devtool: "source-map",
-  // devServer: {
-  //   contentBase: path.join(__dirname, 'public'),
-  //   compress: true,
-  //   port: 9000
-  // },
   target: "web"
 };
