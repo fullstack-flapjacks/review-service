@@ -41,7 +41,7 @@ test('updates reviews with highest rated reviews', async () => {
   expect(totalReviews).toBe(50);
   expect(reviews[0].averageRating).toBe(5);
   const children = wrapper.find('.individual-reviews').children();
-  const firstChild = wrapper.find('.star-rating').first().find('.star');
+  const firstChild = wrapper.find('.stars-rating').first().find('.star');
   expect(children.length).toBe(25);
   expect(firstChild.length).toBe(5);
 });
@@ -57,7 +57,7 @@ test('updates reviews with lowest rated reviews', async () => {
   expect(totalReviews).toBe(50);
   expect(reviews[0].averageRating).toBe(1);
   const children = wrapper.find('.individual-reviews').children();
-  const firstChild = wrapper.find('.star-rating').first().find('.star');
+  const firstChild = wrapper.find('.stars-rating').first().find('.star');
   expect(children.length).toBe(25);
   expect(firstChild.length).toBe(1);
 });

@@ -27,14 +27,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: false,
       template: require('html-webpack-template'),
-      appMountId: "app"
+      appMountId: "app",
+      links: ['https://fonts.googleapis.com/css?family=Lato:300,400']
     })
   ],
   devtool: "source-map",
-  // devServer: {
-  //   contentBase: path.join(__dirname, 'public'),
-  //   compress: true,
-  //   port: 9000
-  // },
   target: "web"
 };

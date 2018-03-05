@@ -76,8 +76,10 @@ router.get('/summary', amw(async (req, res, next) => {
   const restaurant   = chance.pickone(restaurants);
   const totalReviews = await Models.reviewsModel.find({ restaurant: restaurant._id }).count();
   const stats = await Models.statsModel.findOne({ restaurant: restaurant._id });
+  const dist  = await Models.ratingsDistModel.findOne({ _id: stats.ratingsDistribution });
+  const statsDist = {...stats._doc, ratingsDistribution: dist };
 
-  res.send({ stats: 'ok', json: { stats: stats, totalReviews: totalReviews }});
+  res.send({ stats: 'ok', json: { stats: statsDist, totalReviews: totalReviews }});
 }));
 
 router.get('/newest/:rid/:page/:page_length/:search?', amw(async (req, res) => {

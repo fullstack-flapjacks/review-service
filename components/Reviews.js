@@ -10,13 +10,14 @@ import Stats from './Stats.js';
 
 const Summary = ({ user, review, rating }) => (
   <div className="review-summary">
-    <div className="star-rating">
-    {_.range(0, rating).map((_, idx) => {
-      return <div key={idx} className="star"></div>;
-    })}
+    <div className="photo-summary">
+      <img className="avatar" src={user.avatar} />
+      <div className="user-stub">
+        <div className="username">{ user.name } ({ review.location })</div>
+        <Stars stars={rating} />
+        <span className="dinedOn">Dined { moment(review.dinedOn).fromNow() }</span>
+      </div>
     </div>
-    <div className="dinedOn">{ moment(review.dinedOn).fromNow() }</div>
-    <div className="username">{ user.name } ({ review.location })</div>
   </div>
 );
 
@@ -29,11 +30,20 @@ const Body = ({ readMore, text }) => {
   }
 }
 
-const Footer = props => (
-  <div className="review-footer">
-    <a>+ Read More</a>
+const Footer = ({ readMore, showReadMore }) => {
+  const readMoreButton = (showReadMore) ? <a onClick={readMore}>- Read More</a>: <a onClick={readMore}>+ Read More</a>;
+
+  return <div className="review-footer">
+    <div className="read-more">{readMoreButton}</div>
+    <div className="actions">
+      <i className="flag"></i>
+      <span className="report-text">Report</span>
+      <i className="helpful"></i> 
+      <span className="helpful-text">Helpful</span>
+    </div>    
+
   </div>
-);
+};
 
 class Review extends Component {
   constructor(props){
@@ -59,8 +69,7 @@ class Review extends Component {
         review={review} 
         user={user} />
       <Body readMore={this.state.readMore} text={review.text} />
-      <Footer readMore={this.state.readMore} />
-      <div onClick={this.onReadMore}>Click me to test</div>
+      <Footer readMore={this.onReadMore} showReadMore={this.state.readMore} />
     </div>    
   }
 };
@@ -76,7 +85,7 @@ class Reviews extends Component {
       reviews: [],
       stats: {},
       page: 1,
-      pageLength: 25,
+      pageLength: 10,
       totalReviews: 0
     };
 
@@ -148,29 +157,29 @@ class Reviews extends Component {
     }
   }
 
-  onSortByChange(event){
-    const sortBy = event.target.value;
-    this.setState({ sortByValue: sortBy });
+  onSortByChange(name){
+    return () => {
+      const sortBy = name;
+      this.setState({ sortByValue: sortBy });
 
-    this.getAndUpdateReviews(this.generateGetURL(sortBy, this.state.filters));
+      this.getAndUpdateReviews(this.generateGetURL(sortBy, this.state.filters));
+    }
   }
 
-  onFilterCheck(event){
-    const target = event.target;
-    const name = target.name;
-    const value = (target.type === 'checkbox') ? target.checked: target.value;
+  onFilterCheck(name){
+    return (event) => {
+      const updatedFilters = {
+        ...this.state.filters,
+        [name]: !this.state.filters[name]
+      };
 
-    const updatedFilters = {
-      ...this.state.filters,
-      [name]: value
-    };
+      this.setState({
+        filters: updatedFilters
+      });
 
-    this.setState({
-      filters: updatedFilters
-    });
-
-    const sortBy = this.state.sortByValue;
-    this.getAndUpdateReviews(this.generateGetURL(sortBy, updatedFilters));
+      const sortBy = this.state.sortByValue;
+      this.getAndUpdateReviews(this.generateGetURL(sortBy, updatedFilters));
+    }
   }
 
   render(){
@@ -183,9 +192,13 @@ class Reviews extends Component {
       {(stats.averageRating) ? <Stats stats={stats} />: undefined }
       <div className="sorting-filters">
         <h2>Sort By</h2>
-        <SortDropdown value={this.state.sortByValue} handleChange={this.onSortByChange} />
+        <div className="dropdown-container">
+          <SortDropdown value={this.state.sortByValue} handleChange={this.onSortByChange} />
+        </div>
         <h2>Filters</h2>
-        <FilterCheckboxes onCheck={this.onFilterCheck} words={this.state.filterWords} checks={this.state.filters} />
+        <div className="filter-container">
+          <FilterCheckboxes onCheck={this.onFilterCheck} words={this.state.filterWords} checks={this.state.filters} />
+        </div>
       </div>
       <div className="individual-reviews">
         {(reviews) ? reviews.map((review, idx) => {
@@ -197,7 +210,7 @@ class Reviews extends Component {
           totalReviews={this.state.totalReviews} 
           pageLength={this.state.pageLength} 
           loadPage={this.loadPage} 
-          currentPage={this.state.currentPage} />
+          currentPage={this.state.page} />
       </div> 
     </div>;
   }
