@@ -6,6 +6,7 @@ $black: #000;
 
 body {
   font-family: 'Lato', sans-serif;
+  line-height: 1.5;
 }
 
 /*
@@ -162,6 +163,12 @@ body {
   font-weight: bold;
 }
 
+.search-bold {
+  font-weight: bold;
+  background-color: $grey;
+  padding: 0px 5px 3px 5px;
+}
+
 /*
   SECTIONS
 */
@@ -293,6 +300,10 @@ body {
   clear: both;
   padding: 1em;
   margin: 1em 0;
+
+  .snippet {
+    margin-bottom: 1rem;
+  }
 
   .photo-summary {
     .avatar {
