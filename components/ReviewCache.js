@@ -3,8 +3,7 @@ import * as _ from 'ramda';
 import { preloadImages } from './CacheUtil.js';
 import config from './config.client.js';
 
-const mode = 'TEST';
-const ROOT_PATH = config[mode].HOST + ':' + config[mode].PORT;
+const ROOT_PATH = config.HOST + ':' + config.PORT;
 
 // Specific Review Cache Manager
 

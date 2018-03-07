@@ -12,8 +12,7 @@ import JSONCacheWorker from './cache.worker.js';
 import signals from 'signals';
 import config from './config.client.js';
 
-const mode = 'TEST';
-const ROOT_PATH = config[mode].HOST + ':' + config[mode].PORT;
+const ROOT_PATH = config.HOST + ':' + config.PORT;
 
 if (window.JEST !== true){
   var cacheWorker = new JSONCacheWorker();

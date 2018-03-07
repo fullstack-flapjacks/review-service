@@ -5,4 +5,7 @@ const config = {
   }
 }
 
-export default config;
+const MODE = 'TEST';
+const selectedConfig = config[MODE];
+
+export default selectedConfig;
