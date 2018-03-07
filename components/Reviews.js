@@ -22,7 +22,7 @@ const Events = {
 };
 
 Events.reviews.add((rid, page, pageLength, filters) => {
-  console.log('fetching with', rid, page, pageLength, filters);
+  // console.log('fetching with', rid, page, pageLength, filters);
   Cache.prefetchSortPages(rid, page, pageLength, filters);
 });
 
@@ -72,7 +72,7 @@ const SearchSnippets = ({ getSnippet, searchWords }) => {
   return <div className="review-body">
     {snippets.map((snippet, idx) => {
       if (snippet !== null){
-        console.log('Using this snippet', idx, htmlSnippet(snippet));
+        // console.log('Using this snippet', idx, htmlSnippet(snippet));
         return <div key={idx} className="snippet" dangerouslySetInnerHTML={htmlSnippet(snippet)}></div>;
       } else {
         return undefined;
@@ -358,7 +358,7 @@ class Reviews extends Component {
       </div>
       <div className="individual-reviews">
         {(reviews) ? reviews.map((review, idx) => {
-          console.log('searchWords', Object.keys(this.state.filters));
+          // console.log('searchWords', Object.keys(this.state.filters));
           return <Review key={idx} model={review} searchWords={activeFilters(this.state.filters)} />;
         }): undefined}
       </div>
