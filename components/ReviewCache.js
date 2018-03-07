@@ -2,7 +2,9 @@ import axios from 'axios';
 import * as _ from 'ramda';
 import { preloadImages } from './CacheUtil.js';
 import config from './config.client.js';
-const ROOT_PATH = config.TEST.HOST + ':' + config.TEST.PORT;
+
+const mode = 'TEST';
+const ROOT_PATH = config[mode].HOST + ':' + config[mode].PORT;
 
 // Specific Review Cache Manager
 
