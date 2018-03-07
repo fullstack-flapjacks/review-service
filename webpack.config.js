@@ -19,7 +19,11 @@ module.exports = {
             use: ['css-loader', 'sass-loader']
         })
       },
-      { test: /\.jsx?$/, loader: 'babel-loader' }
+      { test: /\.jsx?$/, loader: 'babel-loader' },
+      {
+        test: /\.worker\.js$/,
+        use: { loader: 'worker-loader', options: { name: 'cache.worker.bundle.js' } }
+      }
     ]
   },
   plugins: [

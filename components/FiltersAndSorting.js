@@ -57,16 +57,16 @@ class SortDropdown extends Component {
 
 }
 
-const FilterCheckbox = ({ word, onCheck, checked }) => (
-  <div className="filter" onClick={onCheck(word)}>
+const FilterCheckbox = ({ word, onCheck, checked, mousein, mouseout }) => (
+  <div className="filter" onClick={onCheck(word)} onMouseEnter={mousein(`filter-${word}`, 1, word)} onMouseLeave={mouseout(`filter-${word}`, 1, word)}>
     <label className="filter-label">{word.charAt(0).toUpperCase() + word.slice(1)}</label>
     <i className={(checked) ? "checked-box" : "unchecked-box"}></i>
   </div>
 );
 
-const FilterCheckboxes = ({ words, onCheck, checks }) => (
+const FilterCheckboxes = ({ words, onCheck, checks, mousein, mouseout }) => (
   <div className="filters">
-    {words.map((word, idx) => <FilterCheckbox key={idx} word={word} onCheck={onCheck} checked={checks[word]} />)}
+    {words.map((word, idx) => <FilterCheckbox key={idx} word={word} onCheck={onCheck} checked={checks[word]} mousein={mousein} mouseout={mouseout} />)}
   </div>
 );
 

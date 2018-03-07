@@ -7,11 +7,15 @@
   "engines": {
     "node": "9.5.0"
   },
+  "jest": {
+    "globals": {
+      "JEST": true
+    }
+  },
   "scripts": {
     "lint": "./node_modules/.bin/eslint",
     "test": "./node_modules/.bin/jest --ci --testResultsProcessor='jest-junit'",
     "test_seed": "./node_modules/.bin/node ./server/db-models/test-seed.js",
-    "build": "./node_modules/.bin/webpack --config ./webpack.config.js --context ./client && ./node_modules/.bin/webpack --config ./server/webpack.config.js --context ./server",
     "start": "./node_modules/.bin/node ./server/server.js",
     "seed": "./node_modules/.bin/node ./server/db-models/seed.js reviewservice 100 10000 100",
     "stats": "./node_modules/.bin/node ./server/db-models/stats.js reviewservice",
@@ -35,6 +39,7 @@
     "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "signals": "^1.0.0",
     "webpack": "^3.11.0"
   },
   "devDependencies": {
@@ -58,6 +63,7 @@
     "html-webpack-template": "^6.1.0",
     "jest": "^22.4.0",
     "jest-junit": "^3.6.0",
+    "jsdom-worker": "^0.1.0",
     "node-sass": "^4.7.2",
     "puppeteer": "^1.1.0",
     "react-test-renderer": "^16.2.0",
@@ -66,6 +72,7 @@
     "style-loader": "^0.20.2",
     "superagent": "^3.8.2",
     "supertest": "^3.0.0",
-    "webpack-node-externals": "^1.6.0"
+    "webpack-node-externals": "^1.6.0",
+    "worker-loader": "^1.1.1"
   }
 }
