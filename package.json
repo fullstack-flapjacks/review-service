@@ -7,6 +7,11 @@
   "engines": {
     "node": "9.5.0"
   },
+  "jest": {
+    "globals": {
+      "JEST": true
+    }
+  },
   "scripts": {
     "lint": "./node_modules/.bin/eslint",
     "test": "./node_modules/.bin/jest --ci --testResultsProcessor='jest-junit'",
@@ -58,6 +63,7 @@
     "html-webpack-template": "^6.1.0",
     "jest": "^22.4.0",
     "jest-junit": "^3.6.0",
+    "jsdom-worker": "^0.1.0",
     "node-sass": "^4.7.2",
     "puppeteer": "^1.1.0",
     "react-test-renderer": "^16.2.0",

@@ -14,15 +14,17 @@ import config from './config.client.js';
 
 const ROOT_PATH = config.TEST.HOST + ':' + config.TEST.PORT;
 
-const cacheWorker = new JSONCacheWorker();
-const Cache = new ReviewCache(cacheWorker);
+if (window.JEST !== true){
+  var cacheWorker = new JSONCacheWorker();
+  var Cache = new ReviewCache(cacheWorker);
+}
+
 
 const Events = {
   reviews: new signals.Signal()
 };
 
 Events.reviews.add((rid, page, pageLength, filters) => {
-  // console.log('fetching with', rid, page, pageLength, filters);
   Cache.prefetchSortPages(rid, page, pageLength, filters);
 });
 
@@ -72,13 +74,12 @@ const SearchSnippets = ({ getSnippet, searchWords }) => {
   return <div className="review-body">
     {snippets.map((snippet, idx) => {
       if (snippet !== null){
-        // console.log('Using this snippet', idx, htmlSnippet(snippet));
         return <div key={idx} className="snippet" dangerouslySetInnerHTML={htmlSnippet(snippet)}></div>;
       } else {
         return undefined;
       }
     })}
-  </div>
+  </div>;
 }
 
 class Review extends Component {
@@ -203,7 +204,7 @@ class Reviews extends Component {
     Cache.fetch(url).then((json) => {
       const reviews = json.reviews;
       const review = reviews[0];
-      const filterWords = _.uniq(_.range(0, 5).map((idx) => this.randomWord(review.text)));
+      const filterWords = _.uniq(_.range(0, 5).map((idx) => this.randomWord(review.text).toLowerCase()));
 
       this.setState({ reviews: reviews, page: currentPage, filterWords: filterWords });      
     });
