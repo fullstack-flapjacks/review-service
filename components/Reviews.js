@@ -8,8 +8,23 @@ import { SortDropdown, FilterCheckbox, FilterCheckboxes } from './FiltersAndSort
 import Pages from './Pages.js';
 import Stats from './Stats.js';
 import ReviewCache from './ReviewCache.js';
+import JSONCacheWorker from './cache.worker.js';
+import signals from 'signals';
+import config from './config.client.js';
 
-const Cache = new ReviewCache();
+const ROOT_PATH = config.TEST.HOST + ':' + config.TEST.PORT;
+
+const cacheWorker = new JSONCacheWorker();
+const Cache = new ReviewCache(cacheWorker);
+
+const Events = {
+  reviews: new signals.Signal()
+};
+
+Events.reviews.add((rid, page, pageLength, filters) => {
+  console.log('fetching with', rid, page, pageLength, filters);
+  Cache.prefetchSortPages(rid, page, pageLength, filters);
+});
 
 const Summary = ({ user, review, rating }) => (
   <div className="review-summary">
@@ -166,29 +181,32 @@ class Reviews extends Component {
 
   componentDidMount(){
     if (!this.props.test){
-      const getStats = axios('/summary');
+      const getStats = axios(ROOT_PATH + '/summary');
 
-      getStats.then((response) => {;
+      getStats.then((response) => {
         const stats   = response.data.json.stats;
         const totalReviews = response.data.json.totalReviews;
 
         this.setState({ stats: stats, rid: stats.restaurant, totalReviews: totalReviews });
 
-        Cache.setOptions(stats.restaurant, this.state.pageLength, totalReviews, 1);
-        Cache.prefetchInit().then((res) => {
-          const ok = res.ok;
-          const first = res.results[0].reviews[0];
-          // console.log(res);
-          const filterWords = _.uniq(_.range(0, 5).map(() => {
-            return this.randomWord(first.text);
-          }));
-
-          this.setState({ filterWords: filterWords });
-          // console.log('Prefetched initial pages', ok);
-          this.getAndUpdateReviews(this.generateGetURL());
-        });
+        Events.reviews.dispatch(stats.restaurant, 1, this.state.pageLength, this.state.filters);
+        this.initLoadPage();
       });
     }
+  }
+
+  initLoadPage(){
+    const currentPage = 1;
+    const sortBy = 'newest';
+    const url = this.generateGetURL(sortBy, {}, currentPage);
+
+    Cache.fetch(url).then((json) => {
+      const reviews = json.reviews;
+      const review = reviews[0];
+      const filterWords = _.uniq(_.range(0, 5).map((idx) => this.randomWord(review.text)));
+
+      this.setState({ reviews: reviews, page: currentPage, filterWords: filterWords });      
+    });
   }
 
   loadPage(page){
@@ -200,14 +218,9 @@ class Reviews extends Component {
 
         Cache.fetch(url).then((json) => {
           const reviews = json.reviews;
-          const first = reviews[0];
 
           this.setState({ reviews: reviews, page: currentPage });          
-        });
-
-        Cache.prefetchSortPages(currentPage).then((_) => {
-          console.log('Prefetch pages');
-        });       
+        });      
       }      
     }
   }
@@ -225,7 +238,7 @@ class Reviews extends Component {
 
   generateGetURL(sortBy = 'newest', filters = {}, page = 1){
     const words = this.makeSearchString(filters);
-    const url = `/${sortBy}/${this.state.rid}/${page}/${this.state.pageLength}/${words}`;
+    const url = ROOT_PATH + `/${sortBy}/${this.state.stats.restaurant}/${page}/${this.state.pageLength}/${words}`;
 
     return url;
   }
@@ -269,7 +282,6 @@ class Reviews extends Component {
   pollMouseHover(id, page, filterWord){
     const address = `${id}-${page}`;
     setTimeout(() => {
-        console.log('setTimeout called');
         if (this.state.mouseTracker[address] === true){
           if (filterWord){
             var filters = {...this.state.filters, [filterWord]: true };
@@ -277,9 +289,7 @@ class Reviews extends Component {
             var filters = {...this.state.filters};
           }
 
-          Cache.prefetchSortPages(page - 1, filters).then((res) => {
-            console.log("Prefetching...", page, res);
-          });
+          Events.reviews.dispatch(this.state.stats.restaurant, page, this.state.pageLength, filters);
         }
       } , 200);
   }
