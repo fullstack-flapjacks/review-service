@@ -2,6 +2,7 @@ const _ = require('ramda');
 const Chance = require('chance');
 const chance = new Chance();
 const express = require('express');
+const path = require('path');
 
 const DB_NAME = (process.env.TEST === 'true') ? 'testreviewservice' : 'reviewservice';
 
@@ -10,7 +11,7 @@ mongoose.connect(process.env.DB + DB_NAME);
 const Models = require('./db-models/models.js');
 
 const app = express();
-app.use(express.static('../public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // For catching promise errors
 const amw = (fn) => {
